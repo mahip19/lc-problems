@@ -37,3 +37,6 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+# Raw data files
+/raw/
+/raw_txt/
