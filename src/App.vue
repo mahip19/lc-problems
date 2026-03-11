@@ -12,7 +12,7 @@
           : 'border-gray-200 bg-white shadow-sm'
       "
     >
-      <div class="max-w-5xl mx-auto px-4 py-4">
+      <div class="max-w-5xl mx-auto px-4 py-4" @click="openDropdown = null">
         <div class="flex items-center justify-between mb-3">
           <h1
             class="text-lg font-bold tracking-tight"
@@ -46,51 +46,287 @@
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-3">
-          <select
-            v-model="selectedCompany"
-            class="rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
-            :class="
-              dark
-                ? 'bg-[#0a0a0a] border border-[#2a2a2a] text-white'
-                : 'bg-white border border-gray-300 text-gray-800'
-            "
-          >
-            <option v-for="c in companyNames" :key="c" :value="c">
-              {{ c }}
-            </option>
-          </select>
-
-          <select
-            v-model="selectedDifficulty"
-            class="rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
-            :class="
-              dark
-                ? 'bg-[#0a0a0a] border border-[#2a2a2a] text-white'
-                : 'bg-white border border-gray-300 text-gray-800'
-            "
-          >
-            <option
-              v-for="d in ['All', 'Easy', 'Medium', 'Hard']"
-              :key="d"
-              :value="d"
+        <div class="flex flex-wrap gap-2 items-center">
+          <!-- Company Filter -->
+          <div class="relative" @click.stop>
+            <button
+              @click.stop="
+                openDropdown = openDropdown === 'company' ? null : 'company'
+              "
+              class="rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer flex items-center gap-1"
+              :class="
+                dark
+                  ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+              "
             >
-              {{ d }}
-            </option>
-          </select>
+              {{ selectedCompany }}
+              <svg
+                class="w-4 h-4 transition-transform"
+                :class="openDropdown === 'company' ? 'rotate-180' : ''"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              v-if="openDropdown === 'company'"
+              class="absolute left-0 mt-1 rounded-lg shadow-lg border min-w-max z-20"
+              :class="
+                dark
+                  ? 'bg-[#1a1a1a] border-[#2a2a2a]'
+                  : 'bg-white border-gray-200'
+              "
+            >
+              <div
+                v-for="c in companyNames"
+                :key="c"
+                @click.stop="
+                  selectedCompany = c;
+                  openDropdown = null;
+                "
+                class="px-4 py-2 cursor-pointer text-sm hover:bg-emerald-500/20"
+                :class="
+                  selectedCompany === c
+                    ? 'font-bold text-emerald-400'
+                    : dark
+                      ? 'text-slate-300'
+                      : 'text-gray-700'
+                "
+              >
+                {{ c }}
+              </div>
+            </div>
+          </div>
 
-          <select
-            v-model="sortBy"
-            class="rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
-            :class="
-              dark
-                ? 'bg-[#0a0a0a] border border-[#2a2a2a] text-white'
-                : 'bg-white border border-gray-300 text-gray-800'
-            "
-          >
-            <option value="frequency">Sort: Frequency</option>
-            <option value="difficulty">Sort: Difficulty</option>
-          </select>
+          <!-- Difficulty Filters -->
+          <div class="relative" @click.stop>
+            <button
+              @click.stop="
+                openDropdown =
+                  openDropdown === 'difficulty' ? null : 'difficulty'
+              "
+              class="rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer flex items-center gap-1"
+              :class="
+                selectedDifficulties.size === 0
+                  ? dark
+                    ? 'bg-slate-700/50 text-slate-400 hover:bg-slate-700/70'
+                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  : dark
+                    ? 'bg-purple-500/20 text-purple-400 hover:bg-purple-500/30'
+                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+              "
+            >
+              <span v-if="selectedDifficulties.size === 0">Difficulty</span>
+              <span v-else class="flex items-center gap-1">
+                {{ Array.from(selectedDifficulties).join(", ") }}
+                <button
+                  @click.stop="
+                    selectedDifficulties = new Set();
+                    openDropdown = null;
+                  "
+                  class="text-lg leading-none hover:scale-125"
+                >
+                  ×
+                </button>
+              </span>
+              <svg
+                v-if="selectedDifficulties.size === 0"
+                class="w-4 h-4 transition-transform"
+                :class="openDropdown === 'difficulty' ? 'rotate-180' : ''"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              v-if="openDropdown === 'difficulty'"
+              class="absolute left-0 mt-1 rounded-lg shadow-lg border min-w-max z-20"
+              :class="
+                dark
+                  ? 'bg-[#1a1a1a] border-[#2a2a2a]'
+                  : 'bg-white border-gray-200'
+              "
+            >
+              <div
+                v-for="d in ['Easy', 'Medium', 'Hard']"
+                :key="d"
+                @click.stop="toggleDifficulty(d)"
+                class="px-4 py-2 cursor-pointer text-sm hover:bg-purple-500/20 flex items-center gap-2"
+                :class="dark ? 'text-slate-300' : 'text-gray-700'"
+              >
+                <input
+                  type="checkbox"
+                  :checked="selectedDifficulties.has(d)"
+                  class="cursor-pointer"
+                />
+                {{ d }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Topic Filters -->
+          <div class="relative" @click.stop>
+            <button
+              @click.stop="
+                openDropdown = openDropdown === 'topic' ? null : 'topic'
+              "
+              class="rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer flex items-center gap-1"
+              :class="
+                selectedTopics.size === 0
+                  ? dark
+                    ? 'bg-slate-700/50 text-slate-400 hover:bg-slate-700/70'
+                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  : dark
+                    ? 'bg-pink-500/20 text-pink-400 hover:bg-pink-500/30'
+                    : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
+              "
+            >
+              <span v-if="selectedTopics.size === 0">Topics</span>
+              <span
+                v-else
+                class="flex items-center gap-1 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
+              >
+                {{ Array.from(selectedTopics).slice(0, 2).join(", ")
+                }}{{ selectedTopics.size > 2 ? "..." : "" }}
+                <button
+                  @click.stop="
+                    selectedTopics = new Set();
+                    openDropdown = null;
+                  "
+                  class="text-lg leading-none hover:scale-125 flex-shrink-0"
+                >
+                  ×
+                </button>
+              </span>
+              <svg
+                v-if="selectedTopics.size === 0"
+                class="w-4 h-4 transition-transform"
+                :class="openDropdown === 'topic' ? 'rotate-180' : ''"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              v-if="openDropdown === 'topic'"
+              class="absolute left-0 mt-1 rounded-lg shadow-lg border min-w-max z-20 max-h-64 overflow-y-auto"
+              :class="
+                dark
+                  ? 'bg-[#1a1a1a] border-[#2a2a2a]'
+                  : 'bg-white border-gray-200'
+              "
+            >
+              <div
+                v-for="t in topicsList"
+                :key="t"
+                @click.stop="toggleTopic(t)"
+                class="px-4 py-2 cursor-pointer text-sm hover:bg-pink-500/20 flex items-center gap-2"
+                :class="dark ? 'text-slate-300' : 'text-gray-700'"
+              >
+                <input
+                  type="checkbox"
+                  :checked="selectedTopics.has(t)"
+                  class="cursor-pointer"
+                />
+                {{ t }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Sort -->
+          <div class="relative ml-auto" @click.stop>
+            <button
+              @click.stop="
+                openDropdown = openDropdown === 'sort' ? null : 'sort'
+              "
+              class="rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer flex items-center gap-1"
+              :class="
+                dark
+                  ? 'bg-slate-700/50 text-slate-400 hover:bg-slate-700/70'
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              "
+            >
+              Sort: {{ sortBy === "frequency" ? "Frequency" : "Difficulty" }}
+              <svg
+                class="w-4 h-4 transition-transform"
+                :class="openDropdown === 'sort' ? 'rotate-180' : ''"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              v-if="openDropdown === 'sort'"
+              class="absolute right-0 mt-1 rounded-lg shadow-lg border min-w-max z-20"
+              :class="
+                dark
+                  ? 'bg-[#1a1a1a] border-[#2a2a2a]'
+                  : 'bg-white border-gray-200'
+              "
+            >
+              <div
+                @click="
+                  sortBy = 'frequency';
+                  openDropdown = null;
+                "
+                class="px-4 py-2 cursor-pointer text-sm hover:bg-slate-500/20"
+                :class="
+                  sortBy === 'frequency'
+                    ? 'font-bold text-emerald-400'
+                    : dark
+                      ? 'text-slate-300'
+                      : 'text-gray-700'
+                "
+              >
+                Frequency
+              </div>
+              <div
+                @click.stop="
+                  sortBy = 'difficulty';
+                  openDropdown = null;
+                "
+                class="px-4 py-2 cursor-pointer text-sm hover:bg-slate-500/20"
+                :class="
+                  sortBy === 'difficulty'
+                    ? 'font-bold text-emerald-400'
+                    : dark
+                      ? 'text-slate-300'
+                      : 'text-gray-700'
+                "
+              >
+                Difficulty
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -387,10 +623,24 @@ import { ref, computed } from "vue";
 import data from "./data/problems.json";
 
 const selectedCompany = ref(data[0]?.company || "");
-const selectedDifficulty = ref("All");
+const selectedDifficulties = ref(new Set());
+const selectedTopics = ref(new Set());
 const sortBy = ref("frequency");
 const showResetConfirm = ref(false);
 const dark = ref(localStorage.getItem("lc-theme") !== "light");
+const openDropdown = ref(null);
+
+function toggleDifficulty(difficulty) {
+  const s = new Set(selectedDifficulties.value);
+  s.has(difficulty) ? s.delete(difficulty) : s.add(difficulty);
+  selectedDifficulties.value = s;
+}
+
+function toggleTopic(topic) {
+  const s = new Set(selectedTopics.value);
+  s.has(topic) ? s.delete(topic) : s.add(topic);
+  selectedTopics.value = s;
+}
 
 function toggleTheme() {
   dark.value = !dark.value;
@@ -421,13 +671,31 @@ const currentProblems = computed(() => {
   return entry ? entry.problems : [];
 });
 
+const topicsList = computed(() => {
+  const topics = new Set();
+  currentProblems.value.forEach((p) => {
+    if (p.topics && Array.isArray(p.topics)) {
+      p.topics.forEach((t) => topics.add(t));
+    }
+  });
+  return ["All", ...Array.from(topics).sort()];
+});
+
 const totalForCompany = computed(() => currentProblems.value.length);
 
 const filteredProblems = computed(() => {
   let list = [...currentProblems.value];
 
-  if (selectedDifficulty.value !== "All") {
-    list = list.filter((p) => p.difficulty === selectedDifficulty.value);
+  // Filter by selected difficulties (if any selected, only show those)
+  if (selectedDifficulties.value.size > 0) {
+    list = list.filter((p) => selectedDifficulties.value.has(p.difficulty));
+  }
+
+  // Filter by selected topics (if any selected, only show those)
+  if (selectedTopics.value.size > 0) {
+    list = list.filter(
+      (p) => p.topics && p.topics.some((t) => selectedTopics.value.has(t)),
+    );
   }
 
   if (sortBy.value === "frequency") {

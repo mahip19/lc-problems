@@ -1,6 +1,13 @@
 // TSConfig for modules that run in Node.js environment via either transpilation or type-stripping.
 {
-  "extends": "@tsconfig/node24/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": false
+  },
   "include": [
     "vite.config.*",
     "vitest.config.*",
