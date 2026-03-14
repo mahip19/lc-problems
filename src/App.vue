@@ -1,8 +1,9 @@
 <template>
-  <div
-    class="min-h-screen transition-colors duration-300"
-    :class="dark ? 'bg-[#0a0a0a] text-slate-200' : 'bg-gray-50 text-gray-800'"
-  >
+  <!-- Show auth form if not logged in -->
+  <AuthForm v-if="!user" @authenticated="handleAuthenticated" />
+
+  <!-- Show app if logged in -->
+  <div v-else class="min-h-screen transition-colors duration-300" :class="dark ? 'bg-[#0a0a0a] text-slate-200' : 'bg-gray-50 text-gray-800'">
     <!-- Header -->
     <header
       class="sticky top-0 z-10 border-b transition-colors duration-300"
@@ -21,6 +22,9 @@
             ⚡ LC Company Tracker
           </h1>
           <div class="flex items-center gap-2">
+            <span class="text-xs px-2 py-1 rounded" :class="dark ? 'text-slate-500' : 'text-gray-600'">
+              {{ username }}
+            </span>
             <button
               @click="toggleTheme"
               class="text-xs cursor-pointer px-2 py-1 rounded transition-colors"
@@ -42,6 +46,17 @@
               "
             >
               Reset Progress
+            </button>
+            <button
+              @click="handleLogout"
+              class="text-xs cursor-pointer px-3 py-1 rounded font-medium transition-colors"
+              :class="
+                dark
+                  ? 'text-slate-500 hover:text-red-400 hover:bg-red-500/10'
+                  : 'text-slate-400 hover:text-red-500 hover:bg-red-500/10'
+              "
+            >
+              Logout
             </button>
           </div>
         </div>
@@ -554,7 +569,7 @@
               @click="toggleSolved(p.id)"
               class="w-6 h-6 rounded-lg border-2 flex items-center justify-center text-xs cursor-pointer transition-all duration-200"
               :class="
-                solvedSet.has(p.id)
+                solvedSet.has(String(p.id))
                   ? 'bg-emerald-500 border-emerald-500 text-white scale-110'
                   : 'border-slate-600 text-transparent hover:border-emerald-400 hover:scale-105'
               "
@@ -619,9 +634,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { getProgress, saveProgress, clearToken, getToken } from "./api";
+import AuthForm from "./components/AuthForm.vue";
 import data from "./data/problems.json";
 
+const user = ref(null);
+const username = ref('');
 const selectedCompany = ref(data[0]?.company || "");
 const selectedDifficulties = ref(new Set());
 const selectedTopics = ref(new Set());
@@ -629,6 +648,64 @@ const sortBy = ref("frequency");
 const showResetConfirm = ref(false);
 const dark = ref(localStorage.getItem("lc-theme") !== "light");
 const openDropdown = ref(null);
+
+// Check auth state on mount
+onMounted(() => {
+  const token = getToken()
+  if (token) {
+    user.value = { authenticated: true }
+    loadUserData()
+  }
+});
+
+// Handle authentication - set user and load data
+async function handleAuthenticated() {
+  user.value = { authenticated: true }
+  await loadUserData()
+}
+
+// Load user data from API
+async function loadUserData() {
+  try {
+    console.log('Loading user data...')
+    const data = await getProgress();
+    console.log('Progress loaded:', data)
+    if (data.solvedProblems) {
+      // Create new Set to force reactivity
+      solvedSet.value = new Set(data.solvedProblems);
+      console.log('Solved problems restored:', Array.from(solvedSet.value))
+    }
+  } catch (err) {
+    console.error("Error loading user data:", err);
+  }
+}
+
+// Save solved problems to API
+async function saveSolvedToAPI() {
+  if (!user.value) return;
+  try {
+    console.log('Saving progress:', Array.from(solvedSet.value))
+    await saveProgress(Array.from(solvedSet.value));
+    console.log('Progress saved successfully')
+  } catch (err) {
+    console.error("Error saving data:", err);
+  }
+}
+
+// Logout
+async function handleLogout() {
+  try {
+    clearToken();
+    user.value = null;
+    username.value = '';
+    // Clear local data
+    selectedDifficulties.value = new Set();
+    selectedTopics.value = new Set();
+    solvedSet.value = new Set();
+  } catch (err) {
+    console.error("Error logging out:", err);
+  }
+}
 
 function toggleDifficulty(difficulty) {
   const s = new Set(selectedDifficulties.value);
@@ -647,20 +724,20 @@ function toggleTheme() {
   localStorage.setItem("lc-theme", dark.value ? "dark" : "light");
 }
 
-const solvedSet = ref(
-  new Set(JSON.parse(localStorage.getItem("lc-solved") || "[]")),
-);
+const solvedSet = ref(new Set());
 
 function toggleSolved(id) {
   const s = new Set(solvedSet.value);
-  s.has(id) ? s.delete(id) : s.add(id);
+  const idStr = String(id);
+  s.has(idStr) ? s.delete(idStr) : s.add(idStr);
   solvedSet.value = s;
-  localStorage.setItem("lc-solved", JSON.stringify([...s]));
+  // Save to API (no localStorage)
+  saveSolvedToAPI();
 }
 
 function resetProgress() {
   solvedSet.value = new Set();
-  localStorage.removeItem("lc-solved");
+  saveSolvedToAPI();
   showResetConfirm.value = false;
 }
 
@@ -715,7 +792,7 @@ const counts = computed(() => ({
 }));
 
 const solvedCount = computed(
-  () => currentProblems.value.filter((p) => solvedSet.value.has(p.id)).length,
+  () => currentProblems.value.filter((p) => solvedSet.value.has(String(p.id))).length,
 );
 
 const solvedCountGlobal = computed(() => solvedSet.value.size);
@@ -727,13 +804,13 @@ const solvedPercent = computed(() => {
 
 const solvedByDifficulty = computed(() => ({
   easy: currentProblems.value.filter(
-    (p) => p.difficulty === "Easy" && solvedSet.value.has(p.id),
+    (p) => p.difficulty === "Easy" && solvedSet.value.has(String(p.id)),
   ).length,
   medium: currentProblems.value.filter(
-    (p) => p.difficulty === "Medium" && solvedSet.value.has(p.id),
+    (p) => p.difficulty === "Medium" && solvedSet.value.has(String(p.id)),
   ).length,
   hard: currentProblems.value.filter(
-    (p) => p.difficulty === "Hard" && solvedSet.value.has(p.id),
+    (p) => p.difficulty === "Hard" && solvedSet.value.has(String(p.id)),
   ).length,
 }));
 

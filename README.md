@@ -1,146 +1,120 @@
-# ⚡ LC Company Tracker
+# ⚡ LC Tracker
 
-A powerful LeetCode problem tracker to help you prepare for technical interviews by organizing problems by company, difficulty, and topic.
+A simple LeetCode problem tracker with username/password authentication and MongoDB backend.
 
 ## Features
 
-- 🏢 **Company-based filtering** - View problems by company (Google, Meta, Amazon, etc.)
-- 📊 **Multi-select filters** - Filter by multiple difficulties (Easy, Medium, Hard) simultaneously
-- 🏷️ **Topic filtering** - Filter problems by algorithms (DFS, BFS, Two Pointers, Dynamic Programming, etc.)
-- 🌙 **Dark/Light mode** - Toggle between dark and light themes
-- ⭐ **Progress tracking** - Mark problems as solved and track your completion percentage
-- 📈 **Sort options** - Sort by frequency or difficulty
-- 💾 **Local persistence** - Your progress and theme preference are saved locally
+✅ **Username + Password auth** - No email needed  
+✅ **Cloud sync** - Progress saved to MongoDB  
+✅ **Company filtering** - Google, Meta, Amazon, etc.  
+✅ **Multi-select filters** - Filter by difficulty and topics  
+✅ **Progress tracking** - Mark solved problems and see completion %  
+✅ **Dark/Light mode** - Toggle themes  
+✅ **Simple backend** - REST API with JWT tokens
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
+- Node.js (v16+)
+- MongoDB Atlas account (free)
 
-- **Node.js** (v16 or higher) - [Download](https://nodejs.org/)
-- **npm** (comes with Node.js)
-- **Git** (for cloning the repository)
+## Quick Start
 
-## Installation
+### 1. Set up MongoDB Atlas
 
-### 1. Clone the repository
+1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a free cluster
+3. Create database user with password
+4. Get connection string: `mongodb+srv://username:password@cluster.mongodb.net/lc-tracker`
 
-```bash
-git clone https://github.com/yourusername/lc-problems.git
-cd lc-problems
-```
-
-### 2. Install dependencies
+### 2. Backend Setup
 
 ```bash
+cd backend
 npm install
 ```
 
-This will install all required packages:
-- Vue 3
-- Vite (build tool)
-- TypeScript
-- Tailwind CSS
+Create `backend/.env`:
+```
+MONGODB_URI=mongodb+srv://your_user:your_password@cluster.mongodb.net/lc-tracker
+JWT_SECRET=your_secret_key_here
+PORT=5000
+```
 
-## Running Locally
-
-### Development Server
-
-Start the development server with hot reload:
-
+Start backend:
 ```bash
 npm run dev
 ```
 
-The app will be available at: **http://localhost:5173** (or the next available port if 5173 is in use)
+Should show: `Server running on http://localhost:5000`
 
-Your terminal will display the exact URL to use.
-
-### Build for Production
-
-To create an optimized build for deployment:
+### 3. Frontend Setup
 
 ```bash
-npm run build
+npm install
+npm run dev
 ```
 
-The production-ready files will be generated in the `dist/` directory.
+Open http://localhost:5174
 
-### Preview Production Build
+## How to Use
 
-To preview the production build locally:
+1. **Sign Up** - Enter username (3-20 chars) and password, click "Create Account"
+2. **Sign In** - Use your username and password
+3. **Track** - Click checkboxes to mark problems as solved
+4. **Filter** - Use dropdowns for difficulty and topics
+5. **Sync** - Progress auto-saves to MongoDB
 
-```bash
-npm run preview
-```
+## API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/signup` | Create account |
+| POST | `/api/auth/signin` | Login |
+| GET | `/api/user/progress` | Get solved problems |
+| POST | `/api/user/progress` | Save solved problems |
+
+All user endpoints require `Authorization: Bearer <token>` header
 
 ## Project Structure
 
 ```
 lc-problems/
+├── backend/
+│   ├── models/User.js
+│   ├── middleware/auth.js
+│   ├── routes/auth.js
+│   ├── routes/progress.js
+│   ├── server.js
+│   └── .env
 ├── src/
-│   ├── App.vue           # Main application component
-│   ├── main.ts           # Application entry point
-│   ├── assets/
-│   │   └── main.css      # Global styles
-│   └── data/
-│       └── problems.json # LeetCode problems database
-├── public/               # Static assets
-├── index.html            # HTML template
-├── vite.config.ts        # Vite configuration
-├── tsconfig.json         # TypeScript configuration
-└── package.json          # Project dependencies
+│   ├── components/AuthForm.vue
+│   ├── App.vue
+│   ├── api.ts
+│   └── data/problems.json
+└── package.json
 ```
 
-## Usage Guide
-
-### Filtering Problems
-
-1. **Select a Company** - Click the company button to choose which company's problems to view
-2. **Filter by Difficulty** - Click "Difficulty" to select Easy, Medium, Hard (or any combination)
-3. **Filter by Topic** - Click "Topics" to select specific algorithms or data structures
-4. **Sort Results** - Choose between sorting by Frequency or Difficulty
-
-### Tracking Progress
-
-- Click the ⭐ icon next to a problem to mark it as solved
-- Your progress is automatically saved
-- View the overall completion percentage at the top
-
-### Theme
-
-- Click ☀️ or 🌙 to toggle between light and dark mode
-- Your preference is saved automatically
-
-### Reset Progress
-
-- Click "Reset Progress" in the top right to clear all solved problems (confirmation required)
-
-## Keyboard Shortcuts
-
-- Click outside dropdowns to close them
-- Use checkboxes to select multiple filter options
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## Technologies Used
-
-- **Vue 3** - Progressive JavaScript framework
-- **TypeScript** - Typed JavaScript
-- **Vite** - Next-generation frontend build tool
-- **Tailwind CSS** - Utility-first CSS framework
 
 ## Troubleshooting
 
-### Port already in use
+**"Connection refused" on localhost:5000**
+- Ensure backend is running: `cd backend && npm run dev`
 
-If port 5173 is already in use, Vite will automatically try the next available port. Check the terminal output for the correct URL.
+**"Username already taken"**
+- Choose a different username
 
-### Dependencies not installing
+**MongoDB connection error**
+- Verify `MONGODB_URI` in `backend/.env`
+- Whitelist your IP in MongoDB Atlas (0.0.0.0/0 for development)
+
+## Build for Production
+
+```bash
+npm run build       # Frontend
+cd backend && npm install  # Backend dependencies
+```
+
+Deploy frontend to Vercel/Netlify and backend to Heroku/Railway.
 
 ```bash
 rm -rf node_modules package-lock.json
@@ -156,6 +130,7 @@ npm install
 ## Environment Setup
 
 The app uses localStorage for persisting:
+
 - Solved problems (`lc-solved`)
 - Theme preference (`lc-theme`)
 

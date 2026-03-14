@@ -8,11 +8,21 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+node_modules/
 .DS_Store
 dist
 dist-ssr
 coverage
 *.local
+
+# Environment variables - NEVER commit these!
+.env
+.env.local
+.env.production.local
+.env.*.local
+backend/.env
+backend/.env.local
+backend/.env.*.local
 
 # Editor directories and files
 .vscode/*
@@ -37,6 +47,11 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
 # Raw data files
 /raw/
 /raw_txt/
+
+# Environment variables
+.env.local
+.env.*.local
