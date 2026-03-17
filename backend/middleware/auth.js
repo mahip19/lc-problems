@@ -1,37 +1,37 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 export const generateToken = (userId, username) => {
-  const JWT_SECRET = process.env.JWT_SECRET
+  const JWT_SECRET = process.env.JWT_SECRET;
   if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET not set in environment variables')
+    throw new Error("JWT_SECRET not set in environment variables");
   }
-  return jwt.sign({ userId, username }, JWT_SECRET, { expiresIn: '30d' })
-}
+  return jwt.sign({ userId, username }, JWT_SECRET, { expiresIn: "30d" });
+};
 
 export const verifyToken = (token) => {
   try {
-    const JWT_SECRET = process.env.JWT_SECRET
+    const JWT_SECRET = process.env.JWT_SECRET;
     if (!JWT_SECRET) {
-      throw new Error('JWT_SECRET not set')
+      throw new Error("JWT_SECRET not set");
     }
-    return jwt.verify(token, JWT_SECRET)
+    return jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return null
+    return null;
   }
-}
+};
 
 export const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.replace('Bearer ', '')
+  const token = req.headers.authorization?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ error: 'No token provided' })
+    return res.status(401).json({ error: "No token provided" });
   }
 
-  const decoded = verifyToken(token)
+  const decoded = verifyToken(token);
   if (!decoded) {
-    return res.status(401).json({ error: 'Invalid token' })
+    return res.status(401).json({ error: "Invalid token" });
   }
 
-  req.user = decoded
-  next()
-}
+  req.user = decoded;
+  next();
+};

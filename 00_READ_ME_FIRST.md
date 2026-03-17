@@ -9,6 +9,7 @@ Your LC Tracker has been **completely migrated from Firebase to a custom MongoDB
 ## 📦 What Was Done
 
 ### Removed
+
 ```
 ❌ Firebase SDK (firebase@^12.10.0)
 ❌ Email-based authentication
@@ -18,6 +19,7 @@ Your LC Tracker has been **completely migrated from Firebase to a custom MongoDB
 ```
 
 ### Added
+
 ```
 ✅ Express.js backend server (Node.js)
 ✅ MongoDB Atlas database (Cloud)
@@ -33,6 +35,7 @@ Your LC Tracker has been **completely migrated from Firebase to a custom MongoDB
 ## 📁 New Files Created
 
 ### Backend (`/backend`)
+
 ```
 backend/
 ├── server.js                  # Express server entry point
@@ -46,6 +49,7 @@ backend/
 ```
 
 ### Frontend Updates
+
 ```
 src/
 ├── api.ts                     # REST API client (replaces Firebase)
@@ -54,6 +58,7 @@ src/
 ```
 
 ### Documentation
+
 ```
 📄 START_HERE.md              # Quick 5-min setup guide
 📄 README.md                  # Full setup & usage
@@ -68,15 +73,19 @@ src/
 ## 🚀 Quick Start (5 Minutes)
 
 ### 1. Create Free MongoDB (2 min)
+
 Visit [MONGODB_SETUP.md](MONGODB_SETUP.md) and follow steps 1-6.
 
 Get your connection string:
+
 ```
 mongodb+srv://lc_user:PASSWORD@cluster.mongodb.net/lc-tracker
 ```
 
 ### 2. Configure Backend (30 sec)
+
 Edit `backend/.env`:
+
 ```env
 MONGODB_URI=mongodb+srv://lc_user:YOUR_PASSWORD@cluster.mongodb.net/lc-tracker
 JWT_SECRET=any_random_string_like_hello123
@@ -84,6 +93,7 @@ PORT=5000
 ```
 
 ### 3. Start Backend (1 min)
+
 ```bash
 cd backend
 npm run dev
@@ -92,6 +102,7 @@ npm run dev
 Should show: `Connected to MongoDB` ✅
 
 ### 4. Start Frontend (1 min)
+
 ```bash
 npm run dev
 ```
@@ -99,6 +110,7 @@ npm run dev
 Should show: `Local: http://localhost:5174` ✅
 
 ### 5. Test It! (1 min)
+
 - Open http://localhost:5174
 - Sign up with username "testuser" + password "test123"
 - Mark some problems solved
@@ -136,15 +148,15 @@ User Types Username + Password
 
 ## 📊 Tech Stack Comparison
 
-| Aspect | Before (Firebase) | After (Custom) |
-|--------|-------------------|---|
-| **Frontend** | Vue 3 + Vite | Vue 3 + Vite (unchanged) |
-| **Backend** | None (Firebase handled) | Express.js (Node.js) |
-| **Database** | Firebase Realtime DB | MongoDB Atlas |
-| **Auth** | Firebase Auth SDK | JWT tokens |
-| **Email** | Required | Not required |
-| **Cost** | Free tier (limited) | Free tier (512 MB) |
-| **Control** | Limited to Firebase features | Full control |
+| Aspect       | Before (Firebase)            | After (Custom)           |
+| ------------ | ---------------------------- | ------------------------ |
+| **Frontend** | Vue 3 + Vite                 | Vue 3 + Vite (unchanged) |
+| **Backend**  | None (Firebase handled)      | Express.js (Node.js)     |
+| **Database** | Firebase Realtime DB         | MongoDB Atlas            |
+| **Auth**     | Firebase Auth SDK            | JWT tokens               |
+| **Email**    | Required                     | Not required             |
+| **Cost**     | Free tier (limited)          | Free tier (512 MB)       |
+| **Control**  | Limited to Firebase features | Full control             |
 
 ---
 
@@ -153,49 +165,51 @@ User Types Username + Password
 ✅ **Passwords hashed** with bcrypt (never stored plain text)  
 ✅ **JWT tokens** with 30-day expiration  
 ✅ **User data isolated** - only accessible with valid token  
-✅ **CORS enabled** - frontend can call backend API  
+✅ **CORS enabled** - frontend can call backend API
 
 ---
 
 ## 📚 File Purposes
 
-| File | What It Does |
-|------|---|
-| `backend/server.js` | Starts Express server, connects to MongoDB |
-| `backend/models/User.js` | Defines user data structure & password hashing |
-| `backend/middleware/auth.js` | Creates & verifies JWT tokens |
-| `backend/routes/auth.js` | Handles signup & signin requests |
-| `backend/routes/progress.js` | Handles progress save/load requests |
-| `src/api.ts` | Makes REST API calls from frontend |
-| `src/components/AuthForm.vue` | Login screen UI |
-| `src/App.vue` | Main app logic |
+| File                          | What It Does                                   |
+| ----------------------------- | ---------------------------------------------- |
+| `backend/server.js`           | Starts Express server, connects to MongoDB     |
+| `backend/models/User.js`      | Defines user data structure & password hashing |
+| `backend/middleware/auth.js`  | Creates & verifies JWT tokens                  |
+| `backend/routes/auth.js`      | Handles signup & signin requests               |
+| `backend/routes/progress.js`  | Handles progress save/load requests            |
+| `src/api.ts`                  | Makes REST API calls from frontend             |
+| `src/components/AuthForm.vue` | Login screen UI                                |
+| `src/App.vue`                 | Main app logic                                 |
 
 ---
 
 ## ✨ Key Differences from Firebase
 
 ### Before (Firebase)
+
 ```typescript
 // Sign up with Firebase
-const userCred = await createUserWithEmailAndPassword(auth, email, password)
+const userCred = await createUserWithEmailAndPassword(auth, email, password);
 // Database calls
-const ref = dbRef(database, `users/${user.uid}`)
-await set(ref, data)
+const ref = dbRef(database, `users/${user.uid}`);
+await set(ref, data);
 ```
 
 ### After (Custom Backend)
+
 ```typescript
 // Sign up with backend
-const response = await fetch('/api/auth/signup', {
-  method: 'POST',
-  body: JSON.stringify({ username, password })
-})
+const response = await fetch("/api/auth/signup", {
+  method: "POST",
+  body: JSON.stringify({ username, password }),
+});
 // Save data via API
-const response = await fetch('/api/user/progress', {
-  method: 'POST',
+const response = await fetch("/api/user/progress", {
+  method: "POST",
   headers: { Authorization: `Bearer ${token}` },
-  body: JSON.stringify({ solvedProblems })
-})
+  body: JSON.stringify({ solvedProblems }),
+});
 ```
 
 ---
@@ -238,6 +252,7 @@ const response = await fetch('/api/user/progress', {
 All endpoints return JSON responses.
 
 ### Authentication Endpoints
+
 ```
 POST /api/auth/signup
 Request: { username, password }
@@ -249,6 +264,7 @@ Response: { token, username, solvedProblems: [] }
 ```
 
 ### Progress Endpoints (Require JWT Token)
+
 ```
 GET /api/user/progress
 Header: Authorization: Bearer <token>
@@ -280,11 +296,13 @@ Response: { solvedProblems: ["1", "2", "3"] }
 ## 🚢 Deployment Steps
 
 ### Local Testing (Current)
+
 - ✅ Backend on localhost:5000
 - ✅ Frontend on localhost:5174
 - ✅ MongoDB on MongoDB Atlas (cloud)
 
 ### Production Deployment
+
 1. **Deploy Backend**
    - Service: Heroku, Railway, Render, or similar
    - Must support Node.js
@@ -306,13 +324,13 @@ Response: { solvedProblems: ["1", "2", "3"] }
 
 ## 🐛 Troubleshooting Quick Links
 
-| Issue | Solution |
-|-------|----------|
-| Backend won't start | Check `backend/.env` exists |
-| "Connected to MongoDB" not showing | Fix MongoDB URI in `.env` |
+| Issue                                   | Solution                                |
+| --------------------------------------- | --------------------------------------- |
+| Backend won't start                     | Check `backend/.env` exists             |
+| "Connected to MongoDB" not showing      | Fix MongoDB URI in `.env`               |
 | "Connection refused" for localhost:5000 | Is backend running in another terminal? |
-| Frontend shows blank screen | Check if backend is running |
-| "Username already taken" | Use different username |
+| Frontend shows blank screen             | Check if backend is running             |
+| "Username already taken"                | Use different username                  |
 
 See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for full guide.
 
@@ -360,13 +378,14 @@ By using this setup, you now have:
 ✅ **JWT authentication** understanding  
 ✅ **NoSQL database** (MongoDB) experience  
 ✅ **Password security** (bcrypt hashing)  
-✅ **Production-ready** architecture  
+✅ **Production-ready** architecture
 
 ---
 
 ## 🔄 What's Next?
 
 ### Optional Features to Add
+
 - Password reset email
 - Email verification
 - Password change functionality
@@ -376,11 +395,13 @@ By using this setup, you now have:
 - Problem statistics
 
 ### Deployment
+
 - Deploy backend to Railway/Heroku
 - Deploy frontend to Vercel/Netlify
 - Update API URL in production
 
 ### Scaling
+
 - Add API rate limiting
 - Implement caching
 - Add database indexing

@@ -34,6 +34,7 @@ npm install
 ```
 
 Create `backend/.env`:
+
 ```
 MONGODB_URI=mongodb+srv://your_user:your_password@cluster.mongodb.net/lc-tracker
 JWT_SECRET=your_secret_key_here
@@ -41,6 +42,7 @@ PORT=5000
 ```
 
 Start backend:
+
 ```bash
 npm run dev
 ```
@@ -66,12 +68,12 @@ Open http://localhost:5174
 
 ## API Reference
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/signup` | Create account |
-| POST | `/api/auth/signin` | Login |
-| GET | `/api/user/progress` | Get solved problems |
-| POST | `/api/user/progress` | Save solved problems |
+| Method | Endpoint             | Description          |
+| ------ | -------------------- | -------------------- |
+| POST   | `/api/auth/signup`   | Create account       |
+| POST   | `/api/auth/signin`   | Login                |
+| GET    | `/api/user/progress` | Get solved problems  |
+| POST   | `/api/user/progress` | Save solved problems |
 
 All user endpoints require `Authorization: Bearer <token>` header
 
@@ -94,16 +96,18 @@ lc-problems/
 └── package.json
 ```
 
-
 ## Troubleshooting
 
 **"Connection refused" on localhost:5000**
+
 - Ensure backend is running: `cd backend && npm run dev`
 
 **"Username already taken"**
+
 - Choose a different username
 
 **MongoDB connection error**
+
 - Verify `MONGODB_URI` in `backend/.env`
 - Whitelist your IP in MongoDB Atlas (0.0.0.0/0 for development)
 

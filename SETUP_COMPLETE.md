@@ -5,12 +5,14 @@ Your LC Tracker app has been successfully migrated from Firebase to a simple Mon
 ## 🎯 What Changed
 
 ### Removed
+
 - ❌ Firebase Authentication SDK
 - ❌ Firebase Realtime Database
 - ❌ Email-based authentication
 - ❌ Firebase configuration files
 
 ### Added
+
 - ✅ Node.js/Express backend server
 - ✅ MongoDB database (Atlas)
 - ✅ JWT token authentication
@@ -54,9 +56,11 @@ lc-problems/
 ## 🚀 Quick Start
 
 ### Step 1: Create Free MongoDB (2 minutes)
+
 See [MONGODB_SETUP.md](MONGODB_SETUP.md)
 
 ### Step 2: Configure Backend
+
 ```bash
 # Edit backend/.env with MongoDB URI
 MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/lc-tracker
@@ -66,6 +70,7 @@ JWT_SECRET=any_random_string
 ### Step 3: Run Both Servers
 
 **Terminal 1 - Backend:**
+
 ```bash
 cd backend
 npm run dev
@@ -73,13 +78,16 @@ npm run dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 npm run dev
 # Should show: "Local: http://localhost:5174"
 ```
 
 ### Step 4: Test
+
 Open http://localhost:5174
+
 - Sign up with any username + password
 - Mark problems as solved
 - Refresh page - progress persists ✅
@@ -156,12 +164,12 @@ MongoDB stores one document per user:
 
 ## 🔌 API Endpoints
 
-| Method | Endpoint | Body | Returns |
-|--------|----------|------|---------|
-| POST | `/api/auth/signup` | `{username, password}` | `{token, username}` |
-| POST | `/api/auth/signin` | `{username, password}` | `{token, username, solvedProblems}` |
-| GET | `/api/user/progress` | (header: JWT) | `{solvedProblems}` |
-| POST | `/api/user/progress` | `{solvedProblems}` | `{solvedProblems}` |
+| Method | Endpoint             | Body                   | Returns                             |
+| ------ | -------------------- | ---------------------- | ----------------------------------- |
+| POST   | `/api/auth/signup`   | `{username, password}` | `{token, username}`                 |
+| POST   | `/api/auth/signin`   | `{username, password}` | `{token, username, solvedProblems}` |
+| GET    | `/api/user/progress` | (header: JWT)          | `{solvedProblems}`                  |
+| POST   | `/api/user/progress` | `{solvedProblems}`     | `{solvedProblems}`                  |
 
 ---
 
@@ -177,9 +185,11 @@ MongoDB stores one document per user:
 ## 📝 Environment Variables
 
 ### Frontend
+
 No `.env` file needed! API URL is hardcoded to `http://localhost:5000/api`
 
 ### Backend (`.env`)
+
 ```
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
 JWT_SECRET=random_secret_string_make_this_long
@@ -215,7 +225,7 @@ PORT=5000
 ✅ **Cheaper**: Free MongoDB Atlas tier (512 MB)  
 ✅ **Flexible**: Full control of backend code  
 ✅ **Scalable**: Easy to add features (password reset, email, etc.)  
-✅ **Learning**: Great for understanding backend fundamentals  
+✅ **Learning**: Great for understanding backend fundamentals
 
 ---
 

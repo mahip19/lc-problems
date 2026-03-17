@@ -33,6 +33,7 @@ Get MongoDB running in 5 minutes for free.
 3. Choose "Connect your application"
 4. Select "Node.js" driver
 5. Copy the connection string that looks like:
+
 ```
 mongodb+srv://lc_user:PASSWORD@cluster.mongodb.net/?retryWrites=true&w=majority
 ```
@@ -40,11 +41,13 @@ mongodb+srv://lc_user:PASSWORD@cluster.mongodb.net/?retryWrites=true&w=majority
 ## Step 5: Configure Your App
 
 Replace the password and database name:
+
 ```
 mongodb+srv://lc_user:YOUR_PASSWORD@cluster.mongodb.net/lc-tracker
 ```
 
 Create `backend/.env`:
+
 ```
 MONGODB_URI=mongodb+srv://lc_user:YOUR_PASSWORD@cluster.mongodb.net/lc-tracker
 JWT_SECRET=any_random_string_here_like_hello123
@@ -63,18 +66,21 @@ PORT=5000
 ## Step 7: Test Connection
 
 Run backend:
+
 ```bash
 cd backend
 npm run dev
 ```
 
 You should see:
+
 ```
 Connected to MongoDB
 Server running on http://localhost:5000
 ```
 
 If you see connection errors, check:
+
 - ✅ Username and password are correct
 - ✅ IP whitelist includes your IP (use 0.0.0.0/0 for now)
 - ✅ Database name is correct (lc-tracker)

@@ -5,6 +5,7 @@
 Removed all Firebase dependencies and replaced with a simple Node.js/Express backend connected to MongoDB.
 
 ### Removed Files
+
 - `src/firebase.ts` - Firebase initialization
 - `.env.example` (old Firebase config) - Replaced with `backend/.env.example`
 - `.env.local` - Firebase environment variables
@@ -12,6 +13,7 @@ Removed all Firebase dependencies and replaced with a simple Node.js/Express bac
 ### New Files Created
 
 #### Backend Structure (`/backend`)
+
 - `server.js` - Express server entry point
 - `models/User.js` - MongoDB user schema with password hashing
 - `middleware/auth.js` - JWT token generation and verification
@@ -22,6 +24,7 @@ Removed all Firebase dependencies and replaced with a simple Node.js/Express bac
 - `.env.example` - Template for environment variables
 
 #### Frontend Updates
+
 - `src/api.ts` - Replaced Firebase imports with REST API client
   - `signUp(username, password)` - Sign up with backend
   - `signIn(username, password)` - Sign in with backend
@@ -48,9 +51,11 @@ Removed all Firebase dependencies and replaced with a simple Node.js/Express bac
 4. **Load Progress** → GET `/api/user/progress` with JWT token → Backend retrieves from MongoDB
 
 ### Dependencies Removed
+
 - `firebase@^12.10.0`
 
 ### Dependencies Added (Backend)
+
 - `express` - Web framework
 - `mongoose` - MongoDB ODM
 - `bcryptjs` - Password hashing
@@ -61,6 +66,7 @@ Removed all Firebase dependencies and replaced with a simple Node.js/Express bac
 ### Running the Application
 
 #### Terminal 1: Backend
+
 ```bash
 cd backend
 npm install
@@ -69,6 +75,7 @@ npm run dev
 ```
 
 #### Terminal 2: Frontend
+
 ```bash
 npm install
 npm run dev
@@ -77,14 +84,14 @@ npm run dev
 
 ### Key Differences
 
-| Firebase | MongoDB + Express |
-|----------|-------------------|
-| Cloud-hosted | Self-hosted backend |
-| Email required | Username only |
+| Firebase           | MongoDB + Express       |
+| ------------------ | ----------------------- |
+| Cloud-hosted       | Self-hosted backend     |
+| Email required     | Username only           |
 | Firebase dashboard | MongoDB Atlas dashboard |
-| Real-time database | REST API |
-| Google-managed | Custom API |
-| No backend code | Full control of backend |
+| Real-time database | REST API                |
+| Google-managed     | Custom API              |
+| No backend code    | Full control of backend |
 
 ### Database Schema
 
@@ -101,6 +108,7 @@ User {
 ### Environment Setup
 
 **Backend (.env)**
+
 ```
 MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/lc-tracker
 JWT_SECRET=random_secret_key
@@ -124,4 +132,3 @@ PORT=5000
 3. Mark some problems as solved
 4. Refresh page - progress should persist
 5. Sign in from different browser/device - progress syncs
-
