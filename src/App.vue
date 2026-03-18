@@ -1,6 +1,6 @@
 <template>
   <!-- Show auth form if not logged in -->
-  <AuthForm v-if="!user" @authenticated="handleAuthenticated" />
+<AuthForm v-if="!user" @authenticated="handleAuthenticated" />
 
   <!-- Show app if logged in -->
   <div v-else class="min-h-screen transition-colors duration-300" :class="dark ? 'bg-[#0a0a0a] text-slate-200' : 'bg-gray-50 text-gray-800'">
@@ -649,19 +649,32 @@ const showResetConfirm = ref(false);
 const dark = ref(localStorage.getItem("lc-theme") !== "light");
 const openDropdown = ref(null);
 
+function decodeUsernameFromToken(token) {
+  try {
+    const payloadPart = token.split(".")[1];
+    const json = atob(payloadPart.replace(/-/g, "+").replace(/_/g, "/"));
+    const payload = JSON.parse(json);
+    return payload.username || "";
+  } catch {
+    return "";
+  }
+}
+
 // Check auth state on mount
 onMounted(() => {
-  const token = getToken()
+  const token = getToken();
   if (token) {
-    user.value = { authenticated: true }
-    loadUserData()
+    user.value = { authenticated: true };
+    username.value = decodeUsernameFromToken(token);
+    loadUserData();
   }
 });
 
 // Handle authentication - set user and load data
-async function handleAuthenticated() {
-  user.value = { authenticated: true }
-  await loadUserData()
+async function handleAuthenticated(name) {
+  user.value = { authenticated: true };
+  username.value = name || "";
+  await loadUserData();
 }
 
 // Load user data from API

@@ -188,7 +188,7 @@ async function handleAuth() {
     } else {
       await signIn(username.value, password.value)
     }
-    emit('authenticated')
+    emit('authenticated', username.value)
   } catch (err) {
     console.error('Auth error:', err.message)
     error.value = err.message || 'Authentication failed'
