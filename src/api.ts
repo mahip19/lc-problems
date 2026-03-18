@@ -4,6 +4,19 @@ export const getToken = (): string | null => localStorage.getItem('lc-token')
 export const setToken = (token: string): void => localStorage.setItem('lc-token', token)
 export const clearToken = (): void => localStorage.removeItem('lc-token')
 
+async function parseJsonOrThrow(res: Response) {
+  const raw = await res.text()
+  try {
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    const contentType = res.headers.get('content-type') || 'unknown'
+    const preview = raw.slice(0, 200)
+    throw new Error(
+      `Auth error: Expected JSON but got ${contentType} (status ${res.status}). Body starts with: ${JSON.stringify(preview)}`,
+    )
+  }
+}
+
 const headers = () => ({
   'Content-Type': 'application/json',
   ...(getToken() && { Authorization: `Bearer ${getToken()}` }),
@@ -15,7 +28,7 @@ export const signUp = async (username: string, password: string) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   })
-  const data = await res.json()
+  const data = await parseJsonOrThrow(res)
   if (!res.ok) throw new Error(data.error || 'Signup failed')
   setToken(data.token)
   return data
@@ -27,7 +40,7 @@ export const signIn = async (username: string, password: string) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   })
-  const data = await res.json()
+  const data = await parseJsonOrThrow(res)
   if (!res.ok) throw new Error(data.error || 'Signin failed')
   setToken(data.token)
   return data
@@ -37,7 +50,7 @@ export const getProgress = async () => {
   const res = await fetch(`${API_URL}/user/progress`, {
     headers: headers(),
   })
-  const data = await res.json()
+  const data = await parseJsonOrThrow(res)
   if (!res.ok) throw new Error(data.error || 'Failed to get progress')
   return data
 }
@@ -48,7 +61,7 @@ export const saveProgress = async (solvedProblems: string[]): Promise<void> => {
     headers: headers(),
     body: JSON.stringify({ solvedProblems }),
   })
-  const data = await res.json()
+  const data = await parseJsonOrThrow(res)
   if (!res.ok) throw new Error(data.error || 'Failed to save progress')
   return data
 }
