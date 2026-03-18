@@ -93,7 +93,7 @@
             </button>
             <div
               v-if="openDropdown === 'company'"
-              class="absolute left-0 mt-1 rounded-lg shadow-lg border min-w-max z-20"
+              class="absolute left-0 mt-1 rounded-lg shadow-lg border min-w-max z-20 max-h-64 overflow-y-auto overscroll-contain"
               :class="
                 dark
                   ? 'bg-[#1a1a1a] border-[#2a2a2a]'
